@@ -2,6 +2,7 @@ package org.example.calendarmavenjavaspring.dto;
 
 import org.example.calendarmavenjavaspring.model.Event;
 import org.example.calendarmavenjavaspring.model.User;
+import org.example.calendarmavenjavaspring.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,6 +10,12 @@ import java.util.List;
 
 @Component
 public class DTOMapper {
+
+    private final UserRepository userRepository;
+
+    public DTOMapper(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public UserDTO userToDTO(User user) {
         return new UserDTO(user.getNickname(), user.getEmail());
@@ -36,7 +43,7 @@ public class DTOMapper {
 
     public EventDTO eventToDTO(Event event) {
         return new EventDTO(event.getTitle(), event.getDescription(), event.getLocation(), event.getDate(), event.getStartTime(),
-                event.getEndTime(), event.getUser());
+                event.getEndTime(), event.getUser().getNickname());
     }
 
     public List<EventDTO> eventsToDTOs(List<Event> events) {
@@ -49,7 +56,7 @@ public class DTOMapper {
 
     public Event DTOToEvent(EventDTO eventDTO) {
         return new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getLocation(), eventDTO.getDate(),
-                eventDTO.getStartTime(), eventDTO.getEndTime(), eventDTO.getUser());
+                eventDTO.getStartTime(), eventDTO.getEndTime(), userRepository.findByNickname(eventDTO.getNickname()));
     }
 
     public List<Event> DTOsToEvents(List<EventDTO> eventDTOs) {

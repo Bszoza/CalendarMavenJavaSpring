@@ -1,27 +1,32 @@
 package org.example.calendarmavenjavaspring.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.example.calendarmavenjavaspring.model.User;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class EventDTO {
+    @NotBlank(message = "Title is required")
     private String title;
     private String description;
     private String location;
+    @NotNull(message = "Date is required")
     private Date date;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private User user;
+    @NotBlank(message = "Nickname is required")
+    private String nickname;
 
-    public EventDTO(String title, String description, String location, Date date, LocalDateTime startTime, LocalDateTime endTime, User user) {
+    public EventDTO(String title, String description, String location, Date date, LocalDateTime startTime, LocalDateTime endTime, String nickname) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.user = user;
+        this.nickname = nickname;
     }
 
     public String getTitle() {
@@ -72,12 +77,12 @@ public class EventDTO {
         this.endTime = endTime;
     }
 
-    public User getUser() {
-        return user;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
@@ -89,7 +94,7 @@ public class EventDTO {
                 ", date=" + date +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", user=" + user +
+                ", user=" + nickname +
                 '}';
     }
 }

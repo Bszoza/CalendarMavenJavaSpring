@@ -28,20 +28,38 @@ public class CalendarService {
         userRepository.save(dtoMapper.DTOToUser(user));
     }
 
+    public List<UserDTO> getUsers() {
+        List<User> users = userRepository.findAll();
+        return dtoMapper.usersToDTOs(users);
+    }
+
     public void addEvent(EventDTO event) {
-        if (userRepository.existsByNickname(event.getUser().getNickname())) {
+        if (userRepository.existsByNickname(event.getNickname())) {
             eventRepository.save(dtoMapper.DTOToEvent(event));
         } else throw new IllegalArgumentException("User with nickname not found");
     }
 
     public List<EventDTO> getEventsOfUser(Long id) {
-        return dtoMapper.eventsToDTOs(eventRepository.findByUserId(id));
+        if (userRepository.existsById(id)) {
+            return dtoMapper.eventsToDTOs(eventRepository.findByUserId(id));
+        } else throw new IllegalArgumentException("User with this id not found");
     }
 
     public EventDTO getEvent(Long id) {
-        if (eventRepository.findById(id).isPresent()) {
-            return dtoMapper.eventToDTO(eventRepository.findById(id).get());
+        return eventRepository.findById(id).map(dtoMapper::eventToDTO)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    public void deleteEvent(Long id) {
+        if (eventRepository.existsById(id)) {
+            eventRepository.deleteById(id);
         } else throw new EntityNotFoundException();
+    }
+
+    public void updateEvent(Long id, EventDTO event) {
+        if (eventRepository.findById(id).isPresent() && userRepository.existsByNickname(event.getNickname())) {
+            eventRepository.save(dtoMapper.DTOToEvent(event));
+        } else throw new IllegalArgumentException("User with nickname '" + event.getNickname() + "' not found");
     }
 
 
